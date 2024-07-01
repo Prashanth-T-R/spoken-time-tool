@@ -24,7 +24,7 @@ class TimeValidator {
  *   <tr><th scope="row">m</th>       <td>minute-of-hour</td>              <td>number</td>            <td>30</td>
      * @throws Exception 
      */
-	static LocalTime validate(String timeInput) throws Exception {
+	static LocalTime validate(final String timeInput) throws Exception {
 		LocalTime time = null;
 		StringBuilder errorMessage = new StringBuilder();
 		
@@ -33,10 +33,11 @@ class TimeValidator {
 		
 		//00:59
 		if(timeInput != null && !timeInput.isBlank() ) {
-			DateTimeFormatter formatTime = DateTimeFormatter.ofPattern("HH:mm"/* ,Locale.UK */);
+			
 			
 			try {
-				time = LocalTime.parse(timeInput,formatTime);
+				//time = parseTimewith_stdLibary(timeInput);
+				time = parseTimewith_custom(timeInput);
 				
 				if(time.getHour() > 12) {
 					errorMessage.append("Hour can't be greater than 12. ");
@@ -51,7 +52,7 @@ class TimeValidator {
 					hasError = false;
 				}
 				
-			}catch (DateTimeParseException e) {
+			}catch (NumberFormatException e) {
 				errorMessage.append(standardErrorMessage);
 				log.error(e.getMessage());
 				throw new Exception(errorMessage.toString());
@@ -71,6 +72,40 @@ class TimeValidator {
 			// min ranges from 00 to 59
 		}
 		
+		return time;
+	}
+	
+	
+	/**
+	 * should convert 1:00, 00:00,11:55,12:00
+	 * @param timeInput
+	 * @return
+	 */
+	static LocalTime parseTimewith_custom(final String timeInput) throws NumberFormatException{
+		LocalTime time = null;
+		if(timeInput != null && !timeInput.isBlank()) {
+			if(timeInput.contains(":")) {
+				String [] tokens = timeInput.split(":");
+				int hour = Integer.parseInt(tokens[0]);
+				int min =  Integer.parseInt(tokens[1]);
+				time = LocalTime.of(hour, min);
+			}
+		}
+		return time;
+	}
+	
+	
+	/**
+	 * doesnt go well with H:mm
+	 * @param timeInput
+	 * @return
+	 */
+	@Deprecated
+	static LocalTime parseTimewith_stdLibary(final String timeInput){
+		LocalTime time = null;
+		DateTimeFormatter formatTime = DateTimeFormatter.ofPattern("HH:mm"/* ,Locale.UK */);
+		formatTime = DateTimeFormatter.ISO_LOCAL_TIME;
+		time = LocalTime.parse(timeInput,formatTime);
 		return time;
 	}
 	
