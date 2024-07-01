@@ -88,6 +88,8 @@ public class SpokenTimeGenerator {
 				
 				if(isQuarterTime(time)) {
 					minutes = (HourMinuteSpokenDataStores.specialTimes.get(time.getMinute()));
+				}else if(isHalfTime(time)) {
+					minutes = (HourMinuteSpokenDataStores.specialTimes.get(time.getMinute()));
 				}else {
 					minutes = buildMinutes(time);
 				}
@@ -99,6 +101,9 @@ public class SpokenTimeGenerator {
 		
 		private static boolean isQuarterTime( LocalTime time ) {
 			return time.getMinute() == 15 || time.getMinute() == 45;
+		}
+		private static boolean isHalfTime( LocalTime time ) {
+			return time.getMinute() == 30 ;
 		}
 			
 		private static boolean isHalfPastTime( LocalTime time ) {
@@ -205,9 +210,9 @@ public class SpokenTimeGenerator {
 		
 		test_forwardTo_examples();
 		
-		//test_halfpast_examples();
+		test_halfpast_examples();
 		
-		//test_hourly_chimes();
+		test_hourly_chimes();
 	}
 	
 	static void test_hourly_chimes() throws Exception {

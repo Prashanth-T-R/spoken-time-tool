@@ -74,6 +74,7 @@ class HourMinuteSpokenDataStores {
 		static {
 			
 			specialTimes.put(15, "quarter");
+			specialTimes.put(30, "half");
 			specialTimes.put(45, "quarter");
 		}
 		
