@@ -1,8 +1,6 @@
 package tool.spkntime.core;
 
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 
@@ -21,6 +19,8 @@ public class SpokenTimeGenerator {
 			result = HourlyChimeHandler.handle_hourlychime(time);
 		}else if(HalfPastHandler.isHalfPastTime(time)) {
 			result = HalfPastHandler.handle_halfpastTimes(time);
+		}else if(HalfForwardToHandler.isHalfForwardToTime(time)) {
+			result = HalfForwardToHandler.handle_halfForwardToTimes(time);
 		}
 		
 		System.out.println(result);
@@ -31,27 +31,6 @@ public class SpokenTimeGenerator {
 	}
 	
 	class HourlyChimeHandler{
-		
-		//to be replaced by locales eventually
-		final static Map<Integer,String> hourlychimeMap = new HashMap<>(12);
-		static {
-			//specials
-			hourlychimeMap.put(0, "midnight");
-			hourlychimeMap.put(12, "noon");
-			
-			//o'clock
-			hourlychimeMap.put(1, "one");
-			hourlychimeMap.put(2, "two");
-			hourlychimeMap.put(3, "three");
-			hourlychimeMap.put(4, "four");
-			hourlychimeMap.put(5, "five");
-			hourlychimeMap.put(6, "six");
-			hourlychimeMap.put(7, "seven");
-			hourlychimeMap.put(8, "eight");
-			hourlychimeMap.put(9, "nine");
-			hourlychimeMap.put(10, "ten");
-			hourlychimeMap.put(11, "eleven");
-		}
 		
 		
 		/**
@@ -74,7 +53,7 @@ public class SpokenTimeGenerator {
 		static String handle_hourlychime( LocalTime time ) {
 			StringBuilder spokenTime = new StringBuilder("");
 			if(is_zero_minute_hour(time)) {
-				spokenTime.append(hourlychimeMap.get((Integer)time.getHour()));
+				spokenTime.append(HourMinuteSpokenDataStores.hourlychimeMap.get((Integer)time.getHour()));
 				if(is_oclock_hour(time)) {
 					spokenTime.append(" " + "o'clock")  ;
 				}
@@ -95,54 +74,6 @@ public class SpokenTimeGenerator {
 	
 	
 	class HalfPastHandler{
-		static final Map<Integer,String> tensMap = new HashMap<>(10);
-		static {
-			//o'clock
-			tensMap.put(1, "one");
-			tensMap.put(2, "two");
-			tensMap.put(3, "three");
-			tensMap.put(4, "four");
-			tensMap.put(5, "five");
-			tensMap.put(6, "six");
-			tensMap.put(7, "seven");
-			tensMap.put(8, "eight");
-			tensMap.put(9, "nine");
-			tensMap.put(10, "ten");
-					
-		}
-		
-		static final Map<Integer,String> tenToTwentiesMap = new HashMap<>(10);
-		static {
-			tenToTwentiesMap.put(11, "eleven");
-			tenToTwentiesMap.put(12, "twelve");
-			
-			tenToTwentiesMap.put(13, "thirteen");
-			tenToTwentiesMap.put(14, "fourteen");
-			tenToTwentiesMap.put(15, "fifteen");
-			tenToTwentiesMap.put(16, "sixteen");
-			tenToTwentiesMap.put(17, "seventeen");
-			tenToTwentiesMap.put(18, "eighteen");
-			tenToTwentiesMap.put(19, "nineteen");
-			
-			tenToTwentiesMap.put(20, "twenty");
-		}
-		
-		static final Map<Integer,String> tenTwentiesThirtyFortyFiftyMap = new HashMap<>(10);
-		static {
-			
-			tenTwentiesThirtyFortyFiftyMap.put(10, "ten");
-			tenTwentiesThirtyFortyFiftyMap.put(20, "twenty");
-			tenTwentiesThirtyFortyFiftyMap.put(30, "thirty");
-			tenTwentiesThirtyFortyFiftyMap.put(40, "forty");
-			tenTwentiesThirtyFortyFiftyMap.put(50, "fifty");
-		}
-		
-		static final Map<Integer,String> specialTimes = new HashMap<>(10);
-		static {
-			
-			specialTimes.put(15, "quarter");
-			specialTimes.put(45, "quarter");
-		}
 		
 		/**
 		 * https://en.wikipedia.org/wiki/Date_and_time_notation_in_the_United_Kingdom
@@ -156,7 +87,7 @@ public class SpokenTimeGenerator {
 			if(isHalfPastTime(time) ) {
 				
 				if(isQuarterTime(time)) {
-					minutes = (specialTimes.get(time.getMinute()));
+					minutes = (HourMinuteSpokenDataStores.specialTimes.get(time.getMinute()));
 				}else {
 					minutes = buildMinutes(time);
 				}
@@ -175,7 +106,7 @@ public class SpokenTimeGenerator {
 		}
 		
 		private static String  buildHour( LocalTime time ) {
-			return HourlyChimeHandler.hourlychimeMap.get(time.getHour());
+			return HourMinuteSpokenDataStores.hourlychimeMap.get(time.getHour());
 		}
 		
 		/**
@@ -187,17 +118,17 @@ public class SpokenTimeGenerator {
 			StringBuilder minutes = new StringBuilder();
 			final int min = time.getMinute();
 			if(min <= 10 ) {
-				minutes.append(tensMap.get(min));
+				minutes.append(HourMinuteSpokenDataStores.tensMap.get(min));
 			} else if(min >= 11 && min <= 20) {
-				minutes.append(tenToTwentiesMap.get(min));
+				minutes.append(HourMinuteSpokenDataStores.tenToTwentiesMap.get(min));
 			} else if(min >=21 && min <= 30) {
 				if( min == 30) {
-					minutes.append(tenTwentiesThirtyFortyFiftyMap.get(min));
+					minutes.append(HourMinuteSpokenDataStores.tenTwentiesThirtyFortyFiftyMap.get(min));
 				}else {
 					int tensMin = min % 20;
 					int tens = min - tensMin;
-					minutes.append(tenTwentiesThirtyFortyFiftyMap.get(tens)+ " ");
-					minutes.append(tensMap.get(tensMin) );
+					minutes.append(HourMinuteSpokenDataStores.tenTwentiesThirtyFortyFiftyMap.get(tens)+ " ");
+					minutes.append(HourMinuteSpokenDataStores.tensMap.get(tensMin) );
 				}
 			}else {
 				//we shouldnt be here
@@ -209,14 +140,78 @@ public class SpokenTimeGenerator {
 	//end-class
 	
 	
+	class HalfForwardToHandler{
+		
+		static String handle_halfForwardToTimes( LocalTime time ) {
+			StringBuilder halfpast = new StringBuilder("");
+			String hour = buildHour(time);
+			String minutes = "";
+			if(isHalfForwardToTime(time) ) {
+				
+				if(isQuarterTime(time)) {
+					minutes = (HourMinuteSpokenDataStores.specialTimes.get(time.getMinute()));
+				}else {
+					minutes = buildMinutes(time);
+				}
+			}
+			halfpast.append(minutes);
+			halfpast.append(" to " + hour);
+			return halfpast.toString();
+		}
+		
+		private static boolean isQuarterTime( LocalTime time ) {
+			return time.getMinute() == 45;
+		}
+			
+		private static boolean isHalfForwardToTime( LocalTime time ) {
+			return time.getMinute() > 30;
+		}
+		
+		private static String  buildHour( LocalTime time ) {
+			return HourMinuteSpokenDataStores.hourlychimeMap.get(time.getHour() + 1);
+		}
+		
+		/**
+		 * we are suppose to handle 
+		 * @param time
+		 * @return
+		 */
+		private static String  buildMinutes( LocalTime time ) {
+			StringBuilder minutes = new StringBuilder();
+			final int min = 60 -  time.getMinute();
+			if(min <= 10 ) {
+				minutes.append(HourMinuteSpokenDataStores.tensMap.get(min));
+			} else if(min >= 11 && min <= 20) {
+				minutes.append(HourMinuteSpokenDataStores.tenToTwentiesMap.get(min));
+			} else if(min >=21 && min <= 30) {
+				if( min == 30) {
+					minutes.append(HourMinuteSpokenDataStores.tenTwentiesThirtyFortyFiftyMap.get(min));
+				}else {
+					int tensMin = min % 20;
+					int tens = min - tensMin;
+					minutes.append(HourMinuteSpokenDataStores.tenTwentiesThirtyFortyFiftyMap.get(tens)+ " ");
+					minutes.append(HourMinuteSpokenDataStores.tensMap.get(tensMin) );
+				}
+			}else {
+				//we shouldnt be here
+			}
+			return minutes.toString();
+		}
+		
+	}
+	//end-class
+	
 	public static void main(String[] args) throws Exception {
-		test_halfpast_examples();
 		
+		test_forwardTo_examples();
 		
+		//test_halfpast_examples();
+		
+		//test_hourly_chimes();
 	}
 	
 	static void test_hourly_chimes() throws Exception {
-		for(Integer key : HourlyChimeHandler.hourlychimeMap.keySet()) {
+		for(Integer key : HourMinuteSpokenDataStores.hourlychimeMap.keySet()) {
 			SpokenTimeGenerator.speak(TimeValidator.validate((key )+":00"));
 		}
 	}
@@ -227,5 +222,13 @@ public class SpokenTimeGenerator {
 			SpokenTimeGenerator.speak(TimeValidator.validate(exmaple));
 		}
 	}
+	
+	static void test_forwardTo_examples() throws Exception {
+		String [] halfforwardTo_examples = new String [] {"6:45","6:46","6:55","6:01","6:31","6:35"};
+		for(String  exmaple :halfforwardTo_examples) {
+			SpokenTimeGenerator.speak(TimeValidator.validate(exmaple));
+		}
+	}
+	
 	
 }
