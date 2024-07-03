@@ -2,34 +2,28 @@ package tool.spkntime.core;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * purpose:  Just to  parse input to a valid time and validate the time input, capture error message.
+ * Entrypoint: @see TimeValidator.validate(String)
+ */
 class TimeValidator {
 	
 	private static final Logger log = LoggerFactory.getLogger(TimeValidator.class);
 	
     /**
-     
-    
- *   <tr><th scope="row">a</th>       <td>am-pm-of-day</td>                <td>text</td>              <td>PM</td>
- *   <tr><th scope="row">B</th>       <td>period-of-day</td>               <td>text</td>              <td>in the morning</td>
- *   <tr><th scope="row">h</th>       <td>clock-hour-of-am-pm (1-12)</td>  <td>number</td>            <td>12</td>
- *   <tr><th scope="row">K</th>       <td>hour-of-am-pm (0-11)</td>        <td>number</td>            <td>0</td>
- *   <tr><th scope="row">k</th>       <td>clock-hour-of-day (1-24)</td>    <td>number</td>            <td>24</td>
- *
- *   <tr><th scope="row">H</th>       <td>hour-of-day (0-23)</td>          <td>number</td>            <td>0</td>
- *   <tr><th scope="row">m</th>       <td>minute-of-hour</td>              <td>number</td>            <td>30</td>
-     * @throws Exception 
+     * purpose : entry point to validate the time
+     * @throws Exception with custom error message to the callee 
      */
 	static LocalTime validate(final String timeInput) throws Exception {
 		LocalTime time = null;
 		StringBuilder errorMessage = new StringBuilder();
 		
 		boolean hasError = true;
-		final String standardErrorMessage = "Invalid time, please enter valid time HH:mm \n HH range(0 to 12) and min (0 to 59) "; 
+		final String standardErrorMessage = "<BR>Invalid time, please enter valid time HH:mm . <BR> HH range(0 to 12) and min (0 to 59) <BR> for 10 past 10 enter - 10:10 "; 
 		
 		//00:59
 		if(timeInput != null && !timeInput.isBlank() ) {
@@ -40,12 +34,15 @@ class TimeValidator {
 				time = parseTimewith_custom(timeInput);
 				
 				if(time.getHour() > 12) {
-					errorMessage.append("Hour can't be greater than 12. ");
+					errorMessage.append("Hour can't be greater than 12 . ");
+					log.warn(errorMessage.toString());
+					log.warn(standardErrorMessage);
 					throw new Exception();
 				}
 				if(time.getMinute() > 59) {
-					errorMessage.append("Minute can't be greater than 59. ");
-					log.info("Minute can't be greater than 59. ");
+					log.warn(errorMessage.toString());
+					log.warn(standardErrorMessage);
+					throw new Exception();
 				}
 				
 				if(time.getHour() >= 0 && time.getMinute() >= 0  ) {
@@ -60,16 +57,7 @@ class TimeValidator {
 				errorMessage.append(standardErrorMessage);
 				log.error(e.getMessage());
 				throw new Exception(errorMessage.toString());
-			}finally {
-				if(hasError) {
-					
-				}
 			}
-			
-			 //System.out.println(time);
-			//00:01 to 12:00 
-			// hour ranges from 00 to 12
-			// min ranges from 00 to 59
 		}
 		
 		return time;
@@ -77,11 +65,13 @@ class TimeValidator {
 	
 	
 	/**
+	 * Purpose : puerly to create a valid time HH:mm 
+	 * Couldn't find a time parser in standard libary which fits for our special spoken times midnight, noon scnearios 
 	 * should convert 1:00, 00:00,11:55,12:00
 	 * @param timeInput
 	 * @return
 	 */
-	static LocalTime parseTimewith_custom(final String timeInput) throws NumberFormatException{
+	private static LocalTime parseTimewith_custom(final String timeInput) throws NumberFormatException{
 		LocalTime time = null;
 		if(timeInput != null && !timeInput.isBlank()) {
 			if(timeInput.contains(":")) {
@@ -96,12 +86,20 @@ class TimeValidator {
 	
 	
 	/**
-	 * doesnt go well with H:mm
+	 * 
+	 *   <tr><th scope="row">a</th>       <td>am-pm-of-day</td>                <td>text</td>              <td>PM</td>
+	 *   <tr><th scope="row">B</th>       <td>period-of-day</td>               <td>text</td>              <td>in the morning</td>
+	 *   <tr><th scope="row">h</th>       <td>clock-hour-of-am-pm (1-12)</td>  <td>number</td>            <td>12</td>
+	 *   <tr><th scope="row">K</th>       <td>hour-of-am-pm (0-11)</td>        <td>number</td>            <td>0</td>
+	 *   <tr><th scope="row">k</th>       <td>clock-hour-of-day (1-24)</td>    <td>number</td>            <td>24</td>
+	 
+	 * doesnt go well with HH:mm
 	 * @param timeInput
 	 * @return
+	 * @see DateTimeFormatter
 	 */
 	@Deprecated
-	static LocalTime parseTimewith_stdLibary(final String timeInput){
+	private static LocalTime parseTimewith_stdLibary(final String timeInput){
 		LocalTime time = null;
 		DateTimeFormatter formatTime = DateTimeFormatter.ofPattern("HH:mm"/* ,Locale.UK */);
 		formatTime = DateTimeFormatter.ISO_LOCAL_TIME;
@@ -113,7 +111,7 @@ class TimeValidator {
 		test_suite_1();
 	}
 	
-	static void test_suite_1() throws Exception {
+	private static void test_suite_1() throws Exception {
 		System.out.println("test_suite_1");
 		//validate("01:58");
 		//validate("00:58");
@@ -126,7 +124,7 @@ class TimeValidator {
 		
 	}
 	
-	static void test_suite_2() throws Exception {
+	private static void test_suite_2() throws Exception {
 		System.out.println("test_suite_2");
 		validate("1:58");
 		validate("0:58");

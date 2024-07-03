@@ -3,16 +3,17 @@ package tool.spkntime.core;
 import java.time.LocalTime;
 
 /**
- * 
+ * purpose: The primary business logic handler leveraging @see HourMinuteSpokenDataStores to build and generate the British spoken time
+ * Entrypoint: @see SpokenTimeGenerator.speak(LocalTime)
  */
 public class SpokenTimeGenerator {
 	
 	/**
-	 * 
+	 * This is the entry point to a small decision based time logic call.
+	 * Callee is suppose to give a valid localtime
 	 * @param time
-	 * @return
+	 * @return return the spoken time as per the a static-data-store @see HourMinuteSpokenDataStores
 	 */
-	
 	static String speak(LocalTime time){
 		String result = "";
 		if(HourlyChimeHandler.is_zero_minute_hour(time)) {
@@ -23,10 +24,6 @@ public class SpokenTimeGenerator {
 			result = HalfForwardToHandler.handle_halfForwardToTimes(time);
 		}
 		
-		System.out.println(result);
-//		if(time.getMinute() % 30) {
-//			
-//		}
 		return result;
 	}
 	
@@ -47,8 +44,8 @@ public class SpokenTimeGenerator {
 			00:00 midnight
 		buc-1.3
 			12:00 noon
-		buc-1.4
-		 * @return
+		
+		 * @return a british spoken hourly chime time
 		 */
 		static String handle_hourlychime( LocalTime time ) {
 			StringBuilder spokenTime = new StringBuilder("");
@@ -74,7 +71,6 @@ public class SpokenTimeGenerator {
 		}
 		
 		private static boolean is_SpecialHours( LocalTime time ) {
-			//inclusive 1 to 11
 			return time.getHour() == 0 || time.getHour() == 12;
 		}
 		

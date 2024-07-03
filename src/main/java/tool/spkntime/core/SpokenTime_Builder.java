@@ -1,12 +1,15 @@
 package tool.spkntime.core;
 
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * purpose: a builder to configure locales and an orchestrator for the  time validation validation, spoken time generation
+ * entrypoint : @see SpokenTime_Builder.spokenTime(String)
+ */
 public class SpokenTime_Builder {
 
 	Locale spokenLocale;
@@ -52,24 +55,12 @@ public class SpokenTime_Builder {
 	
 	
 	public static void main(String[] args) {
-		SpokenTime_Builder.build().spokenTime("00:58");
+		
 		//playLocalTime();
 	}
 	
 	static void playLocalTime() {
-		
-		System.out.println(SpokenTime_Builder.build().spokenLocale.getCountry());
-		System.out.println(SpokenTime_Builder.build().spokenLocale.getDisplayLanguage());
-		System.out.println(SpokenTime_Builder.build().spokenLocale);
-		
-		
-		
-		System.out.println(LocalTime.now());
-		
-		System.out.println(LocalTime.MAX);
-		System.out.println(LocalTime.MIDNIGHT);
-		System.out.println(LocalTime.NOON);
-		System.out.println(LocalTime.parse("00:61", DateTimeFormatter.ISO_LOCAL_TIME));
+		SpokenTime_Builder.build().spokenTime("00:58");
 	}
 }
 

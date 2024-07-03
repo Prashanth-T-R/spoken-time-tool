@@ -3,10 +3,14 @@ package tool.spkntime.core;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * purpose: This is a simple static map based datastore to hold hour minute in spoken words
+ * its good enough to reduce the alorithmic complexity for now.
+ * Future scope: we could externalize with properties to support different locale for internationalization support
+ */
 class HourMinuteSpokenDataStores {
 	  
 
-	//to be replaced by locales eventually
 	final static Map<Integer,String> specialHoursChimes = new HashMap<>(2);
 	static {
 		specialHoursChimes.put(0, "midnight");
@@ -16,7 +20,6 @@ class HourMinuteSpokenDataStores {
 	
 	final static Map<Integer,String> hourlyMap = new HashMap<>(12);
 	static {
-		//o'clock
 		hourlyMap.put(1, "one");
 		hourlyMap.put(2, "two");
 		hourlyMap.put(3, "three");
