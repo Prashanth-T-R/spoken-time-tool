@@ -7,24 +7,28 @@ class HourMinuteSpokenDataStores {
 	  
 
 	//to be replaced by locales eventually
-	final static Map<Integer,String> hourlychimeMap = new HashMap<>(12);
+	final static Map<Integer,String> specialHoursChimes = new HashMap<>(2);
 	static {
-		//specials
-		hourlychimeMap.put(0, "midnight");
-		hourlychimeMap.put(12, "noon");
+		specialHoursChimes.put(0, "midnight");
+		specialHoursChimes.put(12, "noon");
 		
+	}
+	
+	final static Map<Integer,String> hourlyMap = new HashMap<>(12);
+	static {
 		//o'clock
-		hourlychimeMap.put(1, "one");
-		hourlychimeMap.put(2, "two");
-		hourlychimeMap.put(3, "three");
-		hourlychimeMap.put(4, "four");
-		hourlychimeMap.put(5, "five");
-		hourlychimeMap.put(6, "six");
-		hourlychimeMap.put(7, "seven");
-		hourlychimeMap.put(8, "eight");
-		hourlychimeMap.put(9, "nine");
-		hourlychimeMap.put(10, "ten");
-		hourlychimeMap.put(11, "eleven");
+		hourlyMap.put(1, "one");
+		hourlyMap.put(2, "two");
+		hourlyMap.put(3, "three");
+		hourlyMap.put(4, "four");
+		hourlyMap.put(5, "five");
+		hourlyMap.put(6, "six");
+		hourlyMap.put(7, "seven");
+		hourlyMap.put(8, "eight");
+		hourlyMap.put(9, "nine");
+		hourlyMap.put(10, "ten");
+		hourlyMap.put(11, "eleven");
+		hourlyMap.put(12, "twelve");
 	}
 	
 	
@@ -60,7 +64,7 @@ class HourMinuteSpokenDataStores {
 			tenToTwentiesMap.put(20, "twenty");
 		}
 		
-		static final Map<Integer,String> tenTwentiesThirtyFortyFiftyMap = new HashMap<>(10);
+		static final Map<Integer,String> tenTwentiesThirtyFortyFiftyMap = new HashMap<>(5);
 		static {
 			
 			tenTwentiesThirtyFortyFiftyMap.put(10, "ten");
@@ -70,12 +74,12 @@ class HourMinuteSpokenDataStores {
 			tenTwentiesThirtyFortyFiftyMap.put(50, "fifty");
 		}
 		
-		static final Map<Integer,String> specialTimes = new HashMap<>(10);
+		static final Map<Integer,String> specialMinTimes = new HashMap<>(3);
 		static {
 			
-			specialTimes.put(15, "quarter");
-			specialTimes.put(30, "half");
-			specialTimes.put(45, "quarter");
+			specialMinTimes.put(15, "quarter");
+			specialMinTimes.put(30, "half");
+			specialMinTimes.put(45, "quarter");
 		}
 		
 	  

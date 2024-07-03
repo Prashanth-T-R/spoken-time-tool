@@ -53,10 +53,13 @@ public class SpokenTimeGenerator {
 		static String handle_hourlychime( LocalTime time ) {
 			StringBuilder spokenTime = new StringBuilder("");
 			if(is_zero_minute_hour(time)) {
-				spokenTime.append(HourMinuteSpokenDataStores.hourlychimeMap.get((Integer)time.getHour()));
-				if(is_oclock_hour(time)) {
+				if(is_SpecialHours(time)) {
+					spokenTime.append(HourMinuteSpokenDataStores.specialHoursChimes.get((Integer)time.getHour()));
+				}else {
+					spokenTime.append(HourMinuteSpokenDataStores.hourlyMap.get((Integer)time.getHour()));
 					spokenTime.append(" " + "o'clock")  ;
 				}
+				
 			}
 			return spokenTime.toString();
 		}
@@ -68,6 +71,11 @@ public class SpokenTimeGenerator {
 		private static boolean is_oclock_hour( LocalTime time ) {
 			//inclusive 1 to 11
 			return time.getHour() >= 1 && time.getHour() <=11;
+		}
+		
+		private static boolean is_SpecialHours( LocalTime time ) {
+			//inclusive 1 to 11
+			return time.getHour() == 0 || time.getHour() == 12;
 		}
 		
 	}
@@ -87,9 +95,9 @@ public class SpokenTimeGenerator {
 			if(isHalfPastTime(time) ) {
 				
 				if(isQuarterTime(time)) {
-					minutes = (HourMinuteSpokenDataStores.specialTimes.get(time.getMinute()));
+					minutes = (HourMinuteSpokenDataStores.specialMinTimes.get(time.getMinute()));
 				}else if(isHalfTime(time)) {
-					minutes = (HourMinuteSpokenDataStores.specialTimes.get(time.getMinute()));
+					minutes = (HourMinuteSpokenDataStores.specialMinTimes.get(time.getMinute()));
 				}else {
 					minutes = buildMinutes(time);
 				}
@@ -111,7 +119,14 @@ public class SpokenTimeGenerator {
 		}
 		
 		private static String  buildHour( LocalTime time ) {
-			return HourMinuteSpokenDataStores.hourlychimeMap.get(time.getHour());
+			//TODO Need clarification to check if this is applicable in british-spoken saying 00:15 quarter past mignight
+			//TODO Need clarification to check if this is applicable in british-spoken saying 00:45 quarter to one 
+			//TODO Need clarification to check if this is applicable in british-spoken saying 12:15 quarter past twelve
+			//TODO Need clarification to check if this is applicable in british-spoken saying 00:45 quarter to one (12 + 1) 
+			if(HourlyChimeHandler.is_SpecialHours(time)) {
+				return HourMinuteSpokenDataStores.specialHoursChimes.get((Integer)time.getHour());
+			}
+			return HourMinuteSpokenDataStores.hourlyMap.get(time.getHour());
 		}
 		
 		/**
@@ -154,7 +169,7 @@ public class SpokenTimeGenerator {
 			if(isHalfForwardToTime(time) ) {
 				
 				if(isQuarterTime(time)) {
-					minutes = (HourMinuteSpokenDataStores.specialTimes.get(time.getMinute()));
+					minutes = (HourMinuteSpokenDataStores.specialMinTimes.get(time.getMinute()));
 				}else {
 					minutes = buildMinutes(time);
 				}
@@ -173,7 +188,18 @@ public class SpokenTimeGenerator {
 		}
 		
 		private static String  buildHour( LocalTime time ) {
-			return HourMinuteSpokenDataStores.hourlychimeMap.get(time.getHour() + 1);
+			//scenario-1
+			//TODO Need clarification to check if this is applicable in british-spoken saying 00:45 quarter to one
+			
+			//scenario-2 two posiblities
+			//TODO Need clarification to check if this is applicable in british-spoken saying 12:45 quarter to one (12 + 1) 
+			//TODO Need clarification to check if this is applicable in british-spoken saying 12:45 quarter to Midnight (12 + 1) 
+			int hour = time.getHour();
+			if(HourlyChimeHandler.is_SpecialHours(time)) {
+				// when hour is 12 we could advance to 1 or zero, we will assume to advance 1
+				hour = hour == 12 ? 0 : hour;
+			}
+			return HourMinuteSpokenDataStores.hourlyMap.get(hour + 1);
 		}
 		
 		/**
@@ -215,20 +241,20 @@ public class SpokenTimeGenerator {
 		test_hourly_chimes();
 	}
 	
-	static void test_hourly_chimes() throws Exception {
-		for(Integer key : HourMinuteSpokenDataStores.hourlychimeMap.keySet()) {
+	private static void test_hourly_chimes() throws Exception {
+		for(Integer key : HourMinuteSpokenDataStores.hourlyMap.keySet()) {
 			SpokenTimeGenerator.speak(TimeValidator.validate((key )+":00"));
 		}
 	}
 	
-	static void test_halfpast_examples() throws Exception {
+	private static void test_halfpast_examples() throws Exception {
 		String [] halfpastexamples = new String [] {"6:15","6:16","6:05","6:01","6:29","6:30"};
 		for(String  exmaple :halfpastexamples) {
 			SpokenTimeGenerator.speak(TimeValidator.validate(exmaple));
 		}
 	}
 	
-	static void test_forwardTo_examples() throws Exception {
+	private static void test_forwardTo_examples() throws Exception {
 		String [] halfforwardTo_examples = new String [] {"6:45","6:46","6:55","6:01","6:31","6:35"};
 		for(String  exmaple :halfforwardTo_examples) {
 			SpokenTimeGenerator.speak(TimeValidator.validate(exmaple));

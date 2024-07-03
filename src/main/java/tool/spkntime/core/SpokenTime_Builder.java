@@ -4,15 +4,21 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SpokenTime_Builder {
 
 	Locale spokenLocale;
+	private static final Logger log = LoggerFactory.getLogger(SpokenTime_Builder.class);
 	
 	private SpokenTime_Builder() {
 		spokenLocale = Locale.UK;
+		log.info("default locale set to British " + spokenLocale.getDisplayCountry());
 	}
 	private SpokenTime_Builder(Locale locale) {
 		spokenLocale = locale;
+		log.info("locale set  " + spokenLocale.getDisplayCountry());
 	}
 
 	public static SpokenTime_Builder build() {
@@ -33,13 +39,15 @@ public class SpokenTime_Builder {
 	}
 	
 	public String spokenTime(String timeInput) {
+		String spokenTime = "";
 		try {
 			LocalTime time = TimeValidator.validate(timeInput);
-			System.out.println(time);
+			spokenTime = SpokenTimeGenerator.speak(time);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
+			spokenTime = e.getMessage();
 		}
-		return timeInput;
+		return spokenTime;
 	}
 	
 	
