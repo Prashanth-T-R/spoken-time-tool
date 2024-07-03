@@ -53,14 +53,31 @@ public class SpokenTime_Builder {
 		return spokenTime;
 	}
 	
+	/**
+	 * this is purely to test wrong inputs from junit
+	 * @param timeInput
+	 * @return
+	 */
+	public boolean wrongInput(String timeInput) {
+		
+		try {
+			TimeValidator.validate(timeInput);
+		} catch (Exception e) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
 	
 	public static void main(String[] args) {
 		
-		//playLocalTime();
+		playLocalTime();
 	}
 	
 	static void playLocalTime() {
-		SpokenTime_Builder.build().spokenTime("00:58");
+		System.out.println(SpokenTime_Builder.build().spokenTime("01:00"));
 	}
 }
 

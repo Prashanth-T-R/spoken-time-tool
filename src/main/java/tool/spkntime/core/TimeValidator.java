@@ -40,6 +40,7 @@ class TimeValidator {
 					throw new Exception();
 				}
 				if(time.getMinute() > 59) {
+					errorMessage.append("Minutes can't be greater than 59 . ");
 					log.warn(errorMessage.toString());
 					log.warn(standardErrorMessage);
 					throw new Exception();
